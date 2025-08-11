@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <!-- Tailwind CSS CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean, professional look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full text-center m-4">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Password Generator</h1>
+        
+        <!-- Password Display Area with copy functionality -->
+        <div class="relative bg-gray-200 text-gray-700 font-mono text-xl py-4 px-6 rounded-lg mb-6 break-all">
+            <span id="password-display">Click a button to generate a password</span>
+            <button id="copy-button" class="absolute top-2 right-2 p-1 text-gray-500 hover:text-gray-900 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+            </button>
+            <div id="copy-message" class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-green-600 opacity-0 transition-opacity duration-300">Copied!</div>
+        </div>
+
+        <!-- Buttons to generate passwords of different lengths -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button id="btn-8-char" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md">
+                8 Characters
+            </button>
+            <button id="btn-10-char" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md">
+                10 Characters
+            </button>
+            <button id="btn-12-char" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md">
+                12 Characters
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const passwordDisplay = document.getElementById('password-display');
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
+
+        /**
+         * Generates a random password of a specified length.
+         * The function uses a combination of uppercase letters, lowercase letters,
+         * numbers, and a set of safe symbols to create a strong password.
+         * @param {number} length - The desired length of the password.
+         * @returns {string} The generated password.
+         */
+        function generatePassword(length) {
+            // Character set including letters, numbers, and symbols
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                // Randomly select a character from the charset
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+            return password;
+        }
+
+        // Add event listeners to the buttons to generate passwords
+        document.getElementById('btn-8-char').addEventListener('click', () => {
+            const newPassword = generatePassword(8);
+            passwordDisplay.textContent = newPassword;
+        });
+
+        document.getElementById('btn-10-char').addEventListener('click', () => {
+            const newPassword = generatePassword(10);
+            passwordDisplay.textContent = newPassword;
+        });
+
+        document.getElementById('btn-12-char').addEventListener('click', () => {
+            const newPassword = generatePassword(12);
+            passwordDisplay.textContent = newPassword;
+        });
+
+        // Function to copy the password to the clipboard
+        copyButton.addEventListener('click', () => {
+            // Get the text content from the display area
+            const passwordText = passwordDisplay.textContent;
+
+            // Ensure there's a password to copy and it's not the initial message
+            if (passwordText && passwordText !== "Click a button to generate a password") {
+                // Use a temporary textarea to hold the text to be copied
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = passwordText;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    // Show a temporary "Copied!" message
+                    copyMessage.classList.add('opacity-100');
+                    setTimeout(() => {
+                        copyMessage.classList.remove('opacity-100');
+                    }, 1500);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                } finally {
+                    document.body.removeChild(tempTextArea);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
